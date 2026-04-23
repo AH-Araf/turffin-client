@@ -1,8 +1,29 @@
 @import "tailwindcss";
 
+/* Turffin (Stitch) design tokens — single source of truth */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --turf-surface: #f7f9fb;
+  --turf-on-surface: #191c1e;
+  --turf-on-surface-variant: #3d4a3e;
+  --turf-secondary: #545f73;
+  --turf-primary: #006d36;
+  --turf-primary-container: #4ade80;
+  --turf-on-primary-container: #005e2d;
+  --turf-on-primary: #ffffff;
+  --turf-primary-fixed: #4de082;
+  --turf-primary-pressed: #005227;
+  --turf-tertiary-tint: #aac4ff;
+  --turf-surface-low: #f2f4f6;
+  --turf-on-yellow: #111c2d;
+  /* Shadows (rgba uses brand greens where noted) */
+  --turf-shadow-glow: 0 20px 20px rgba(74, 222, 128, 0.1);
+  --turf-shadow-search: 0 20px 50px rgba(0, 0, 0, 0.08);
+  --turf-shadow-cta: 0 40px 80px rgba(0, 109, 54, 0.3);
+  --turf-shadow-card-lift: 0 20px 25px -5px rgba(74, 222, 128, 0.15), 0 10px 10px -5px
+    rgba(74, 222, 128, 0.04);
+  /* Legacy / layout bridge */
+  --background: var(--turf-surface);
+  --foreground: var(--turf-on-surface);
 }
 
 @theme inline {
@@ -10,17 +31,36 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  /* Turf semantic colors — use: bg-turf-surface, text-turf-primary, etc. */
+  --color-turf-surface: var(--turf-surface);
+  --color-turf-on-surface: var(--turf-on-surface);
+  --color-turf-on-surface-variant: var(--turf-on-surface-variant);
+  --color-turf-secondary: var(--turf-secondary);
+  --color-turf-primary: var(--turf-primary);
+  --color-turf-primary-container: var(--turf-primary-container);
+  --color-turf-on-primary-container: var(--turf-on-primary-container);
+  --color-turf-on-primary: var(--turf-on-primary);
+  --color-turf-primary-fixed: var(--turf-primary-fixed);
+  --color-turf-primary-pressed: var(--turf-primary-pressed);
+  --color-turf-tertiary-tint: var(--turf-tertiary-tint);
+  --color-turf-surface-low: var(--turf-surface-low);
+  --color-turf-on-yellow: var(--turf-on-yellow);
+  --shadow-turf-glow: var(--turf-shadow-glow);
+  --shadow-turf-search: var(--turf-shadow-search);
+  --shadow-turf-cta: var(--turf-shadow-cta);
+  --shadow-turf-card-lift: var(--turf-shadow-card-lift);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* App UI is light-first; keep text readable if OS is dark */
+    --background: var(--turf-surface);
+    --foreground: var(--turf-on-surface);
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--turf-surface);
+  color: var(--turf-on-surface);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
