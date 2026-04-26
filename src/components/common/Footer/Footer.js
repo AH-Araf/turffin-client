@@ -1,8 +1,15 @@
+"use client";
+
 import { Lexend } from "next/font/google";
+import { usePathname } from "next/navigation";
 
 const lexend = Lexend({ subsets: ["latin"] });
 
 export function Footer() {
+  const pathname = usePathname() ?? "/";
+  if (pathname.startsWith("/dashboard")) {
+    return null;
+  }
   return (
     <footer className="w-full border-t border-slate-800 bg-slate-900 text-white">
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-6 py-10 sm:px-12 md:flex-row">
