@@ -1,5 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import { Footer } from "../components/common/Footer/Footer";
+import { MainContent } from "../components/common/MainContent/MainContent";
 import { NavBar } from "../components/common/NavBar/NavBar";
 import "./globals.css";
 
@@ -18,6 +19,13 @@ export const metadata = {
   description: "Find and book premium sports turfs across Bangladesh.",
 };
 
+/** Lets `env(safe-area-inset-*)` apply on notched phones (dashboard chrome). */
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 export default function RootLayout({ children }) {
   return (
     <html
@@ -26,7 +34,7 @@ export default function RootLayout({ children }) {
     >
       <body className="flex min-h-full flex-col">
         <NavBar />
-        <div className="w-full flex-1 pt-20">{children}</div>
+        <MainContent>{children}</MainContent>
         <Footer />
       </body>
     </html>
