@@ -2,6 +2,9 @@
 
 import { Lexend } from "next/font/google";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
+import { Globe2, Share2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const lexend = Lexend({ subsets: ["latin"] });
 
@@ -22,46 +25,26 @@ export function Footer() {
           </p>
         </div>
         <div className={`${lexend.className} flex flex-wrap justify-center gap-8 text-xs text-slate-500`}>
-          <a
-            className="cursor-pointer underline decoration-turf-primary-container underline-offset-4 transition-colors hover:text-white"
-            href="#"
-          >
+          <Link className="underline decoration-turf-primary-container underline-offset-4 transition-colors hover:text-white" href="#">
             Privacy Policy
-          </a>
-          <a
-            className="cursor-pointer underline decoration-turf-primary-container underline-offset-4 transition-colors hover:text-white"
-            href="#"
-          >
+          </Link>
+          <Link className="underline decoration-turf-primary-container underline-offset-4 transition-colors hover:text-white" href="#">
             Terms of Service
-          </a>
-          <a
-            className="cursor-pointer underline decoration-turf-primary-container underline-offset-4 transition-colors hover:text-white"
-            href="#"
-          >
+          </Link>
+          <Link className="underline decoration-turf-primary-container underline-offset-4 transition-colors hover:text-white" href="#">
             Cookie Settings
-          </a>
-          <a
-            className="cursor-pointer underline decoration-turf-primary-container underline-offset-4 transition-colors hover:text-white"
-            href="#"
-          >
+          </Link>
+          <Link className="underline decoration-turf-primary-container underline-offset-4 transition-colors hover:text-white" href="#">
             Contact Us
-          </a>
+          </Link>
         </div>
         <div className="flex gap-4 text-sm text-slate-300">
-          <button
-            type="button"
-            className="h-8 w-8 cursor-pointer rounded-full border border-slate-700 transition-all hover:border-turf-primary-container hover:bg-turf-primary-container/10"
-            aria-label="Share"
-          >
-            ↗
-          </button>
-          <button
-            type="button"
-            className="h-8 w-8 cursor-pointer rounded-full border border-slate-700 transition-all hover:border-turf-primary-container hover:bg-turf-primary-container/10"
-            aria-label="Region"
-          >
-            ◎
-          </button>
+          <Button type="button" variant="ghost" size="icon" className="h-8 w-8 rounded-full border border-slate-700 text-slate-300 hover:border-turf-primary-container hover:bg-turf-primary-container/10" aria-label="Share">
+            <Share2 className="h-4 w-4" />
+          </Button>
+          <Button type="button" variant="ghost" size="icon" className="h-8 w-8 rounded-full border border-slate-700 text-slate-300 hover:border-turf-primary-container hover:bg-turf-primary-container/10" aria-label="Region">
+            <Globe2 className="h-4 w-4" />
+          </Button>
         </div>
       </div>
     </footer>
