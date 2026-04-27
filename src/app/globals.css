@@ -15,6 +15,7 @@
   --turf-tertiary-tint: #aac4ff;
   --turf-surface-low: #f2f4f6;
   --turf-on-yellow: #111c2d;
+  --radius: 0.75rem;
   /* Shadows (rgba uses brand greens where noted) */
   --turf-shadow-glow: 0 20px 20px rgba(74, 222, 128, 0.1);
   --turf-shadow-search: 0 20px 50px rgba(0, 0, 0, 0.08);
@@ -63,4 +64,8 @@ body {
   background: var(--turf-surface);
   color: var(--turf-on-surface);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+* {
+  border-color: rgb(226 232 240 / 0.8);
 }
