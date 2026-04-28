@@ -65,6 +65,14 @@ function TurfAdminSidebar({ onLinkClick = () => {}, showClose, onClose }) {
           <span>Booking requests</span>
         </Link>
         <Link
+          href="/dashboard/turf-admin/manage-team"
+          className={`${navLink} ${is("/dashboard/turf-admin/manage-team") ? navLinkActive : ""}`}
+          onClick={onLinkClick}
+        >
+          <TurfAdminIcon name="group" className="h-5 w-5" />
+          <span>Manage team</span>
+        </Link>
+        <Link
           href="/dashboard/turf-admin/calendar"
           className={`${navLink} ${is("/dashboard/turf-admin/calendar") ? navLinkActive : ""}`}
           onClick={onLinkClick}
@@ -232,7 +240,7 @@ export function TurfAdminShell({ children, headerCenter, maxWidthClass = "max-w-
         </div>
       </div>
 
-      <main className={`px-3 pb-8 pt-[calc(env(safe-area-inset-top,0)+4rem)] lg:ml-[272px] lg:px-6 lg:pt-[4.5rem]`}>
+      <main className={`px-3 pb-8 pt-[calc(env(safe-area-inset-top,0)+4rem)] lg:ml-[272px] lg:px-6 lg:pt-18`}>
         <div className={`mx-auto ${maxWidthClass}`}>{children}</div>
       </main>
     </div>
