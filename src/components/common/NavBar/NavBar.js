@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Lexend } from "next/font/google";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const lexend = Lexend({ subsets: ["latin"] });
 
@@ -38,10 +40,6 @@ export function NavBar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
-  useEffect(() => {
-    setMenuOpen(false);
-  }, [pathname]);
-
   // Scroll lock without layout shift
   useEffect(() => {
     if (!menuOpen) return;
@@ -74,8 +72,9 @@ export function NavBar() {
   // Focus trap
   useEffect(() => {
     if (!menuOpen || !menuRef.current) return;
+    const menuNode = menuRef.current;
 
-    const focusable = menuRef.current.querySelectorAll(
+    const focusable = menuNode.querySelectorAll(
       'a, button, [tabindex]:not([tabindex="-1"])'
     );
 
@@ -96,8 +95,8 @@ export function NavBar() {
       }
     };
 
-    menuRef.current.addEventListener("keydown", handleTab);
-    return () => menuRef.current?.removeEventListener("keydown", handleTab);
+    menuNode.addEventListener("keydown", handleTab);
+    return () => menuNode.removeEventListener("keydown", handleTab);
   }, [menuOpen]);
 
   if (pathname.startsWith("/dashboard")) return null;
@@ -116,7 +115,7 @@ export function NavBar() {
   return (
     <>
       {/* HEADER (always top layer) */}
-      <header className="fixed top-0 z-[60] h-20 w-full border-b border-slate-100 bg-white/90 backdrop-blur-md shadow-turf-glow">
+      <header className="fixed top-0 z-60 h-20 w-full border-b border-slate-100 bg-white/90 backdrop-blur-md shadow-turf-glow">
         <div className="mx-auto flex h-full max-w-7xl items-center gap-3 px-4 sm:px-6">
           <Link href="/" className={`${lexend.className} text-2xl font-black italic text-slate-900`}>
             Turffin
@@ -131,23 +130,24 @@ export function NavBar() {
           </nav>
 
           <div className="ml-auto flex items-center gap-3">
-            <button
-              onClick={() => setMenuOpen((o) => !o)}
-              className="rounded-lg p-2 text-slate-700 hover:bg-slate-100 lg:hidden"
-            >
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => setMenuOpen((o) => !o)}
+                className="text-slate-700 lg:hidden"
+                aria-label="Toggle menu"
+              >
               <MenuIcon open={menuOpen} />
-            </button>
+              </Button>
 
-            <Link href="/login" className="hidden sm:inline text-sm text-slate-600 hover:text-turf-primary">
-              Login
-            </Link>
+            <Button asChild variant="ghost" className="hidden sm:inline-flex text-sm text-slate-600 hover:text-turf-primary">
+              <Link href="/login">Login</Link>
+            </Button>
 
-            <Link
-              href="/booking"
-              className="hidden sm:inline-flex rounded-lg bg-turf-primary-container px-5 py-2.5 text-sm font-bold text-turf-on-primary"
-            >
-              Book Now
-            </Link>
+            <Button asChild variant="accent" className="hidden sm:inline-flex">
+              <Link href="/booking">Book Now</Link>
+            </Button>
           </div>
         </div>
       </header>
@@ -155,17 +155,19 @@ export function NavBar() {
       {/* OVERLAY */}
       <div
         onClick={() => setMenuOpen(false)}
-        className={`fixed inset-0 top-20 z-[40] bg-slate-900/40 backdrop-blur-sm transition-opacity duration-300 ${
-          menuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        }`}
+        className={cn(
+          "fixed inset-0 top-20 z-40 bg-slate-900/40 backdrop-blur-sm transition-opacity duration-300",
+          menuOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+        )}
       />
 
       {/* MOBILE MENU */}
       <nav
         ref={menuRef}
-        className={`fixed inset-x-0 top-20 z-[50] max-h-[calc(100vh-5rem)] overflow-y-auto bg-white px-4 py-6 shadow-lg transition-transform duration-300 ${
+        className={cn(
+          "fixed inset-x-0 top-20 z-50 max-h-[calc(100vh-5rem)] overflow-y-auto bg-white px-4 py-6 shadow-lg transition-transform duration-300",
           menuOpen ? "translate-y-0" : "-translate-y-full"
-        }`}
+        )}
       >
         <div className="flex flex-col gap-1">
           <Link href="/" className={navClassNameMobile(isHome)}>Home</Link>
@@ -180,12 +182,9 @@ export function NavBar() {
             Login
           </Link>
 
-          <Link
-            href="/booking"
-            className="mt-2 w-full rounded-lg bg-turf-primary-container py-3 text-center text-sm font-bold text-turf-on-primary"
-          >
-            Book Now
-          </Link>
+          <Button asChild variant="accent" className="mt-2 w-full">
+            <Link href="/booking">Book Now</Link>
+          </Button>
         </div>
       </nav>
     </>
