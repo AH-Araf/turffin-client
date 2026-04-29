@@ -4,19 +4,15 @@ const STITCH_SLOT_HERO =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuApGPvfD6-mEHLHSY9uzH5Tg3bnkwMTDssGVjLPKBkjc-xJKcDHmecUxQeFrkKxUgMrwG5BVhjuc3IX37uCvjOn9ZE6KN-oGvl_3613aJnIptCB3aeTsZARD2G-QNOrD023WoLOMn0kUhT3XJhIwzok0YWoI03N2ZZC_d2kuGGm6SE8wbleDj-xR9_6aHn9YtQhKyObnSY6seW7XuzB6neqQR1AG880IkeC5d2Zq7S5hpNQpzZ9KswMWn1yj8kF-lOodH4O1ynFmg";
 
 export const MORNING_TIMES = ["06:00 AM", "07:00 AM", "08:00 AM", "09:00 AM", "10:00 AM", "11:00 AM"];
-export const EVENING_TIMES = [
-  "12:00 PM",
-  "01:00 PM",
-  "02:00 PM",
-  "03:00 PM",
-  "04:00 PM",
-  "05:00 PM",
-  "06:00 PM",
-  "07:00 PM",
-  "08:00 PM",
-  "09:00 PM",
-  "10:00 PM",
-  "11:00 PM",
+export const EVENING_TIMES = ["12:00 PM", "01:00 PM", "02:00 PM", "03:00 PM", "04:00 PM", "05:00 PM"];
+export const NIGHT_TIMES = ["06:00 PM", "07:00 PM", "08:00 PM", "09:00 PM", "10:00 PM", "11:00 PM"];
+export const LATE_NIGHT_TIMES = [
+  "12:00 AM",
+  "01:00 AM",
+  "02:00 AM",
+  "03:00 AM",
+  "04:00 AM",
+  "05:00 AM",
 ];
 
 function hash32(str) {
@@ -34,9 +30,11 @@ export function getSlotPageModel(t) {
   const hourly = t.dayTier.price;
   const morning = MORNING_TIMES.map((time) => ({ time, booked: isBooked(t.id, time, "m") }));
   const evening = EVENING_TIMES.map((time) => ({ time, booked: isBooked(t.id, time, "e") }));
+  const night = NIGHT_TIMES.map((time) => ({ time, booked: isBooked(t.id, time, "n") }));
+  const lateNight = LATE_NIGHT_TIMES.map((time) => ({ time, booked: isBooked(t.id, time, "ln") }));
   const wants = ["09:00 AM", "06:00 PM"];
   const isAvailable = (time) => {
-    const row = [...morning, ...evening].find((x) => x.time === time);
+    const row = [...morning, ...evening, ...night, ...lateNight].find((x) => x.time === time);
     return row && !row.booked;
   };
   const defaultSelected = wants.filter(isAvailable).slice(0, 2);
@@ -55,6 +53,8 @@ export function getSlotPageModel(t) {
     heroSubtitle: "Turffin certified play surface",
     morning,
     evening,
+    night,
+    lateNight,
     defaultSelected,
     dateAnchor: dateAnchor.toISOString(),
     daySummaryLabel: t.booking.defaultDate,
