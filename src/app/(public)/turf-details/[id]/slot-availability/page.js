@@ -31,8 +31,8 @@ export default async function SlotAvailabilityPage({ params }) {
   }
   const model = getSlotPageModel(t);
   return (
-    <div className={`${inter.className} min-h-screen bg-turf-surface text-turf-on-surface antialiased`}>
-      <main className="mx-auto max-w-7xl px-6 pb-40 pt-4">
+    <div className={`${inter.className} min-h-screen overflow-x-hidden bg-turf-surface text-turf-on-surface antialiased`}>
+      <main className="mx-auto max-w-7xl px-4 pb-40 pt-4 sm:px-6">
         <SlotPicker model={model} lexendClassName={lexend.className} />
       </main>
     </div>
