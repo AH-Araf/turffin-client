@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { Lexend } from "next/font/google";
+import { useState } from "react";
 import { TurfAdminIcon, TurfAdminShell } from "@/features/dashboard/turfAdmin/components/TurfAdminShell";
 
 const lexend = Lexend({ subsets: ["latin"] });
@@ -13,7 +14,46 @@ const IMG_G2 =
 const IMG_G3 =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuC8547-bcYU9DyHfYz4pTIT7WIQCfKeRG1WlvMhdAzc8nlBQhhffXVDekQC97i7SRdtw1WWG7BYOWunwe4IZ8spYDM1Wb5WL9GJMy4tbTZT2l_-dTpF3Df9eeXiTZBfJiIcnU1if24OPO1geoPVCvZCW4C67-dEQBDP5pidCue317WZebQzIIeqTf7QobH3rfkF5QEvMRRMwa2tZDjeo73-cvRzUvpTaYjYf28mTA9GTVq5WAoZJd98r3pyY6Ka3-yGxLm6hgbDkg";
 
+const DAY_TABS = ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+
+const TIME_BLOCKS = [
+  { key: "morning", label: "Morning (06:00 AM - 12:00 PM)" },
+  { key: "afternoon", label: "Afternoon (12:00 PM - 06:00 PM)" },
+  { key: "evening", label: "Evening (06:00 PM - 12:00 AM)" },
+  { key: "lateNight", label: "Late night (12:00 AM - 06:00 AM)" },
+];
+
+function getDefaultPrice(day, blockKey) {
+  if (blockKey === "morning") return 1200;
+  if (blockKey === "afternoon") return 1800;
+  if (blockKey === "evening") return 2200;
+  return 2500;
+}
+
+function createInitialPricingState() {
+  return DAY_TABS.reduce((acc, day) => {
+    acc[day] = TIME_BLOCKS.reduce((slotAcc, slot) => {
+      slotAcc[slot.key] = getDefaultPrice(day, slot.key);
+      return slotAcc;
+    }, {});
+    return acc;
+  }, {});
+}
+
 export default function Page() {
+  const [selectedDay, setSelectedDay] = useState("Saturday");
+  const [pricingByDay, setPricingByDay] = useState(createInitialPricingState);
+
+  const handlePriceChange = (day, blockKey, value) => {
+    setPricingByDay((prev) => ({
+      ...prev,
+      [day]: {
+        ...prev[day],
+        [blockKey]: value,
+      },
+    }));
+  };
+
   return (
     <TurfAdminShell
       headerCenter={
@@ -115,53 +155,52 @@ export default function Page() {
           <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="mb-6 flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
               <h3 className={`${lexend.className} text-lg font-semibold text-slate-900`}>Pricing tiers</h3>
-              <span className="w-fit rounded bg-amber-100 px-2 py-1 text-[10px] font-bold uppercase text-amber-700">Auto-calculate night surcharge</span>
+              <span className="w-fit rounded bg-amber-100 px-2 py-1 text-[10px] font-bold uppercase text-amber-700">Set price by day and time block</span>
             </div>
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-              <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-                <h4 className="mb-4 border-b border-slate-200 pb-2 text-[10px] font-semibold uppercase tracking-wider text-slate-900">
-                  Weekday rates (Mon–Fri)
-                </h4>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-sm font-medium text-slate-600">Day (06:00 - 18:00)</span>
-                    <div className="flex items-center overflow-hidden rounded border border-slate-300 bg-white">
-                      <span className="px-2 text-xs text-slate-400">$</span>
-                      <input defaultValue="120" className="w-14 border-none py-1.5 text-center text-sm font-bold outline-none focus:ring-0" />
-                      <span className="px-2 text-xs text-slate-400">/hr</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-sm font-medium text-slate-600">Night (18:00 - 00:00)</span>
-                    <div className="flex items-center overflow-hidden rounded border border-slate-300 bg-white">
-                      <span className="px-2 text-xs text-slate-400">$</span>
-                      <input defaultValue="180" className="w-14 border-none py-1.5 text-center text-sm font-bold outline-none focus:ring-0" />
-                      <span className="px-2 text-xs text-slate-400">/hr</span>
-                    </div>
-                  </div>
-                </div>
+            <div className="space-y-5">
+              <div className="flex flex-wrap gap-2">
+                {DAY_TABS.map((day) => {
+                  const isSelected = day === selectedDay;
+                  return (
+                    <button
+                      key={day}
+                      type="button"
+                      onClick={() => setSelectedDay(day)}
+                      className={[
+                        "rounded-lg px-4 py-2 text-sm font-semibold transition-colors",
+                        isSelected
+                          ? "bg-turf-primary text-white shadow-sm"
+                          : "border border-slate-200 bg-white text-slate-600 hover:border-turf-primary/30 hover:text-turf-primary",
+                      ].join(" ")}
+                    >
+                      {day}
+                    </button>
+                  );
+                })}
               </div>
-              <div className="rounded-lg border border-emerald-100 bg-emerald-50 p-4">
-                <h4 className="mb-4 border-b border-emerald-100 pb-2 text-[10px] font-semibold uppercase tracking-wider text-emerald-900">
-                  Weekend rates (Sat–Sun)
-                </h4>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-sm font-medium text-emerald-800">Day (06:00 - 18:00)</span>
-                    <div className="flex items-center overflow-hidden rounded border border-emerald-300 bg-white">
-                      <span className="px-2 text-xs text-slate-400">$</span>
-                      <input defaultValue="160" className="w-14 border-none py-1.5 text-center text-sm font-bold outline-none focus:ring-0" />
-                      <span className="px-2 text-xs text-slate-400">/hr</span>
+
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                <div className="mb-3 flex items-center justify-between">
+                  <h4 className="text-sm font-bold text-slate-900">{selectedDay} pricing</h4>
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">4 time blocks</span>
+                </div>
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                  {TIME_BLOCKS.map((slot) => (
+                    <div key={`${selectedDay}-${slot.key}`} className="flex items-center justify-between gap-2 rounded-md border border-slate-200 bg-white px-3 py-2">
+                      <span className="text-sm font-medium text-slate-600">{slot.label}</span>
+                      <div className="flex items-center overflow-hidden rounded border border-slate-300 bg-white">
+                        <span className="px-2 text-xs text-slate-400">৳</span>
+                        <input
+                          type="number"
+                          min="0"
+                          value={pricingByDay[selectedDay][slot.key]}
+                          onChange={(e) => handlePriceChange(selectedDay, slot.key, e.target.value)}
+                          className="w-16 border-none py-1.5 text-center text-sm font-bold outline-none focus:ring-0"
+                        />
+                        <span className="px-2 text-xs text-slate-400">/hr</span>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-sm font-medium text-emerald-800">Night (18:00 - 00:00)</span>
-                    <div className="flex items-center overflow-hidden rounded border border-emerald-300 bg-white">
-                      <span className="px-2 text-xs text-slate-400">$</span>
-                      <input defaultValue="220" className="w-14 border-none py-1.5 text-center text-sm font-bold outline-none focus:ring-0" />
-                      <span className="px-2 text-xs text-slate-400">/hr</span>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>

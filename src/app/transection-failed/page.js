@@ -69,7 +69,7 @@ export default function TransactionFailed() {
                   AMOUNT DUE
                 </span>
               </div>
-              <span className="font-bold text-[#191C1E]">$120.00</span>
+              <span className="font-bold text-[#191C1E]">৳120.00</span>
             </div>
           </div>
 

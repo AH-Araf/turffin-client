@@ -98,7 +98,7 @@ export default function Page() {
                 className="flex h-full min-h-[88px] w-full flex-col justify-between rounded border border-emerald-500 bg-white p-2 text-left text-[10px] text-emerald-600 transition-colors hover:bg-emerald-50"
               >
                 <span className="font-bold">AVAILABLE</span>
-                <span>1 hr / $45</span>
+                <span>1 hr / ৳45</span>
               </button>
             </div>
             <div className="border-l border-slate-100 p-1">
@@ -201,9 +201,9 @@ export default function Page() {
                   </select>
                 </div>
                 <div>
-                  <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-500">Pricing (USD)</label>
+                  <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-500">Pricing (Taka)</label>
                   <div className="relative">
-                    <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">$</span>
+                    <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">৳</span>
                     <input type="number" defaultValue="45.00" className="w-full rounded-lg border border-slate-200 py-3 pl-7 outline-none focus:ring-2 focus:ring-turf-primary/20" />
                   </div>
                 </div>
@@ -224,15 +224,15 @@ export default function Page() {
               <div className="space-y-2 border-t border-slate-100 pt-4">
                 <div className="flex justify-between text-sm text-slate-500">
                   <span>Subtotal</span>
-                  <span className="font-medium text-slate-900">$45.00</span>
+                  <span className="font-medium text-slate-900">৳45.00</span>
                 </div>
                 <div className="flex justify-between text-sm text-slate-500">
                   <span>Processing fee</span>
-                  <span className="font-medium text-slate-900">$0.00</span>
+                  <span className="font-medium text-slate-900">৳0.00</span>
                 </div>
                 <div className="flex justify-between border-t border-slate-100 pt-4">
                   <span className="font-bold">Total amount</span>
-                  <span className={`${lexend.className} text-xl font-bold text-turf-primary`}>$45.00</span>
+                  <span className={`${lexend.className} text-xl font-bold text-turf-primary`}>৳45.00</span>
                 </div>
               </div>
             </div>
