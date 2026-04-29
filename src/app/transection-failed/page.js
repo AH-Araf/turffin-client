@@ -74,14 +74,14 @@ export default function TransactionFailed() {
           </div>
 
           <div className="mt-5 flex flex-col gap-4">
-            <button className="w-full h-[61px] bg-[#F97316] rounded-lg flex items-center justify-center gap-2">
+            <button className="w-full h-[61px] bg-[#F97316] rounded-lg flex items-center justify-center gap-2 cursor-pointer transition-colors duration-200 hover:bg-[#ea580c]">
               <RefreshCw className="w-5 h-5 text-white" />
               <span className="text-white text-[18px] font-lexend">
                 Retry Payment
               </span>
             </button>
 
-            <button className="w-full h-[65px] border-2 border-[#545F73] rounded-lg flex items-center justify-center gap-2">
+            <button className="w-full h-[65px] border-2 border-[#545F73] rounded-lg flex items-center justify-center gap-2 cursor-pointer transition-colors duration-200 hover:bg-[#f8fafc]">
               <ArrowLeft className="w-5 h-5 text-[#545F73]" />
               <span className="text-[#545F73] text-[18px] font-lexend">
                 Back to Checkout
