@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Lexend } from "next/font/google";
-import { DashboardUserIcon, UserPortalShell } from "@/features/dashboard/user/components/UserPortalShell";
+import { DashboardUserIcon, UserPortalShell } from "@/components/features/dashboard/user/components/UserPortalShell";
 
 const lexend = Lexend({ subsets: ["latin"] });
 

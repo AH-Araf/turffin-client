@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Lexend } from "next/font/google";
 import { Lock, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useLogin } from "@/hooks/useLogin";
 
 const lexend = Lexend({ subsets: ["latin"] });
 
@@ -27,11 +29,25 @@ function StadiumIcon({ className }) {
 }
 
 export function LoginView() {
+  const router = useRouter();
+  const { login, isLoading, error, resetLoginState } = useLogin();
   const [message, setMessage] = useState("");
 
-  function onSubmit(e) {
+  async function onSubmit(e) {
     e.preventDefault();
-    setMessage("Sign-in is not connected yet. Use Browse Turf to book as a guest for now.");
+    resetLoginState();
+    setMessage("");
+
+    const formData = new FormData(e.currentTarget);
+    const email = String(formData.get("email") || "").trim();
+    const password = String(formData.get("password") || "");
+
+    try {
+      await login({ email, password });
+      router.push("/dashboard/user");
+    } catch {
+      // Error state is handled by the hook.
+    }
   }
 
   return (
@@ -67,6 +83,7 @@ export function LoginView() {
             <p className="text-turf-on-surface-variant">Log in to manage your bookings and teams.</p>
           </header>
 
+          {error ? <p className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p> : null}
           {message ? <p className="mb-4 rounded-lg border border-slate-200 bg-turf-surface-low px-4 py-3 text-sm text-turf-on-surface-variant">{message}</p> : null}
 
           <form className="space-y-6" onSubmit={onSubmit}>
@@ -102,7 +119,9 @@ export function LoginView() {
               </label>
             </div>
 
-            <Button type="submit" variant="accent" className="h-12 w-full text-base">Sign in</Button>
+            <Button type="submit" variant="accent" className="h-12 w-full text-base" disabled={isLoading}>
+              {isLoading ? "Signing in..." : "Sign in"}
+            </Button>
           </form>
 
           <div className="relative my-8">

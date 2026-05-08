@@ -1,5 +1,5 @@
-import { BookingConfirmedPageView } from "@/features/booking-confirmed/BookingConfirmedPageView";
-import { defaultBooking } from "@/features/booking-confirmed/defaults";
+import { BookingConfirmedPageView } from "@/components/features/booking-confirmed/BookingConfirmedPageView";
+import { defaultBooking } from "@/components/features/booking-confirmed/defaults";
 
 export const metadata = {
   title: "Booking confirmed | Turffin",

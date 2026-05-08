@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Lexend } from "next/font/google";
-import { SuperAdminShell, TurfAdminIcon } from "@/features/dashboard/superAdmin/components/SuperAdminShell";
+import { SuperAdminShell, TurfAdminIcon } from "@/components/features/dashboard/superAdmin/components/SuperAdminShell";
 
 const lexend = Lexend({ subsets: ["latin"] });
 
