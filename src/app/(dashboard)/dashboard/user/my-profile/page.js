@@ -5,15 +5,26 @@ import Link from "next/link";
 import { useState } from "react";
 import { Lexend } from "next/font/google";
 import { DashboardUserIcon, UserPortalShell } from "@/components/features/dashboard/user/components/UserPortalShell";
+import { useDashboardAuth } from "@/providers/DashboardAuthProvider";
 
 const lexend = Lexend({ subsets: ["latin"] });
 
 const PROMO_SRC =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuDAkh3CM2UnlhKIFshQfqzE11tLliiWMFtCt4p9lkC-mBP4GpKJXBatrtDWN8Q5q55OWQg4HRw6NmZjkjjoEai9puqRct4_qo_Ej-o1-wPZOzgViIDNxauWHlQAlmmvOhTumyaZ9SeI7Qp5wfFVNTG-t7rob20MrLgiDXEEAXgIFysKTWisxCUVCPB2fw8leG-XcX2k6xZMIr88jaDAQk2322Q42tajyYuZv_LEtPBbKmeCdgDJKiZeM8ZZQ4jeQ9tSdrWMFUocrw";
 
+function defaultDisplayName(user) {
+  const name = user?.name?.trim();
+  if (name) return name.split(/\s+/)[0];
+  const email = user?.email?.trim();
+  if (email) return email.split("@")[0] ?? "";
+  return "";
+}
+
 export default function Page() {
+  const { user, status } = useDashboardAuth();
   const [twoFactor, setTwoFactor] = useState(true);
   const [savedHint, setSavedHint] = useState("");
+  const profileFormKey = status === "loading" ? "loading" : (user?.id ?? "anon");
 
   function onUpdateInfo(e) {
     e.preventDefault();
@@ -60,13 +71,13 @@ export default function Page() {
                 Primary identity
               </span>
             </div>
-            <form className="space-y-6 p-6 md:p-8" onSubmit={onUpdateInfo}>
+            <form key={profileFormKey} className="space-y-6 p-6 md:p-8" onSubmit={onUpdateInfo}>
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div className="space-y-2">
                   <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Full name</label>
                   <input
                     name="fullName"
-                    defaultValue="Rafid Hassan"
+                    defaultValue={user?.name ?? ""}
                     className="w-full rounded-lg border border-slate-200 px-4 py-3 text-turf-on-surface outline-none transition-all focus:border-turf-primary focus:ring-2 focus:ring-turf-primary-container/40"
                     type="text"
                   />
@@ -75,7 +86,7 @@ export default function Page() {
                   <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Display name</label>
                   <input
                     name="displayName"
-                    defaultValue="RafidH"
+                    defaultValue={defaultDisplayName(user)}
                     className="w-full rounded-lg border border-slate-200 px-4 py-3 text-turf-on-surface outline-none transition-all focus:border-turf-primary focus:ring-2 focus:ring-turf-primary-container/40"
                     type="text"
                   />
@@ -87,7 +98,7 @@ export default function Page() {
                   <div className="relative">
                     <input
                       name="email"
-                      defaultValue="rafid@example.com"
+                      defaultValue={user?.email ?? ""}
                       className="w-full rounded-lg border border-slate-200 py-3 pl-4 pr-12 text-turf-on-surface outline-none transition-all focus:border-turf-primary focus:ring-2 focus:ring-turf-primary-container/40"
                       type="email"
                     />

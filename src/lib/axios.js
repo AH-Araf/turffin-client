@@ -27,6 +27,18 @@ export const setAccessToken = (token) => {
 
 let refreshPromise = null;
 
+/** Never attach refresh to these routes — a 401 here means bad credentials or validation, not an expired access token. */
+const shouldSkipTokenRefresh = (url = '') => {
+  if (!url) return true;
+  return (
+    url.includes('/auth/refresh') ||
+    url.includes('/auth/login') ||
+    url.includes('/auth/register') ||
+    url.includes('/auth/forgot-password') ||
+    url.includes('/auth/reset-password')
+  );
+};
+
 const api = axios.create({
   baseURL,
   withCredentials: true,
@@ -53,11 +65,12 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     const status = error.response?.status;
-    const isAuthRefreshRequest = originalRequest?.url?.includes('/auth/refresh');
+    const requestUrl = originalRequest?.url || '';
 
-    const shouldTryRefresh = status === 401 || status === 403;
+    const shouldTryRefresh =
+      (status === 401 || status === 403) && !shouldSkipTokenRefresh(requestUrl);
 
-    if (!shouldTryRefresh || !originalRequest || originalRequest._retry || isAuthRefreshRequest) {
+    if (!shouldTryRefresh || !originalRequest || originalRequest._retry) {
       return Promise.reject(error);
     }
 

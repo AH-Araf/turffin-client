@@ -1,5 +1,6 @@
 import api, { setAccessToken } from '@/lib/axios';
 import { API_CONSTANT } from '@/constant/api-constant';
+import { clearWebSessionFlag, setWebSessionFlag } from '@/lib/web-session-cookie';
 
 const pickData = (response) => response?.data?.data ?? null;
 
@@ -7,6 +8,7 @@ const persistSession = (payload) => {
   const accessToken = payload?.accessToken;
   if (accessToken) {
     setAccessToken(accessToken);
+    setWebSessionFlag();
   }
   return payload;
 };
@@ -50,6 +52,7 @@ export const authService = {
   async logout() {
     const response = await api.post(API_CONSTANT.LOGOUT_URL);
     setAccessToken(null);
+    clearWebSessionFlag();
     return pickData(response);
   }
 };

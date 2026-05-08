@@ -2,9 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import authService from "@/services/auth.service";
 import { Inter, Lexend } from "next/font/google";
+import { SITE_DEMO_USER_AVATAR_URL } from "@/lib/site-assets";
+import { useDashboardAuth } from "@/providers/DashboardAuthProvider";
 import { DashboardUserIcon as Icon } from "./dashboardUserIcons";
 
 export { DashboardUserIcon } from "./dashboardUserIcons";
@@ -12,14 +15,14 @@ export { DashboardUserIcon } from "./dashboardUserIcons";
 const inter = Inter({ subsets: ["latin"] });
 const lexend = Lexend({ subsets: ["latin"] });
 
-export const USER_PORTAL_AVATAR_SRC =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuDxR0l29l-PasU64mNeYcQs8SNdQnQ_NKpq6xdBpYCRuof7_HB0dXzcep7lB6Xn5aJkBD-4Qn-9lwKfVNWxUfnZg6Q2Fiy5fp_5PYAaicZR5veE0v6W4LKzFD3aE1D5gTeqlTFqC81_XLyGwoDvpw4oNXAPeC1pjDGTz-RqgvVhfpru5nhptyF3M86G3j3yMdzo9jeYW6KJ-QlUI1PZIIcVGnyPrEcVIcnMQV0GyGUcrr32at3-ZWi0VxYF2gJL5jrb2RY0gXqBCw";
+export const USER_PORTAL_AVATAR_SRC = SITE_DEMO_USER_AVATAR_URL;
 
 const navLink =
   "flex items-center gap-3 rounded-lg px-3.5 py-2.5 font-medium text-slate-400 transition-colors hover:bg-slate-800/50 hover:text-white";
 const navLinkActive = "border-r-4 border-emerald-400 bg-emerald-400/10 font-bold text-emerald-400";
 
 function DashboardAccountSidebar({ lexendClassName, onLinkClick = () => {}, showClose, onClose }) {
+  const router = useRouter();
   const pathname = usePathname() ?? "";
   const isDashboard = pathname === "/dashboard/user" || pathname.startsWith("/dashboard/user/user-dashboard");
   const isBookings = pathname.startsWith("/dashboard/user/bookings") || pathname.startsWith("/dashboard/user/user-bookings");
@@ -91,10 +94,18 @@ function DashboardAccountSidebar({ lexendClassName, onLinkClick = () => {}, show
         </Link>
       </nav>
       <div className="mt-auto px-4">
-        <Link href="/login" className={navLink} onClick={onLinkClick}>
+        <button
+          type="button"
+          className={`${navLink} w-full text-left`}
+          onClick={async () => {
+            onLinkClick();
+            await authService.logout();
+            router.replace("/login");
+          }}
+        >
           <Icon name="logout" className="h-5 w-5" />
           <span>Logout</span>
-        </Link>
+        </button>
       </div>
     </>
   );
@@ -105,7 +116,17 @@ function DashboardAccountSidebar({ lexendClassName, onLinkClick = () => {}, show
  */
 export function UserPortalShell({ children, headerCenter, maxWidthClass = "max-w-6xl" }) {
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const { user, status } = useDashboardAuth();
   usePathname();
+
+  const displayName =
+    status === "loading" ? "…" : (user?.name?.trim() || user?.email || "Player");
+  const headerSubtitle =
+    status === "loading"
+      ? "…"
+      : user?.name?.trim() && user?.email
+        ? user.email
+        : "Player account";
 
   useEffect(() => {
     if (!accountMenuOpen) return undefined;
@@ -184,9 +205,13 @@ export function UserPortalShell({ children, headerCenter, maxWidthClass = "max-w
               </button>
             </div>
             <div className="flex items-center gap-2 pl-2 md:pl-4">
-              <div className="hidden text-right lg:block">
-                <p className="text-sm font-bold leading-none text-slate-900">Rafid Hassan</p>
-                <p className="text-[10px] font-medium text-slate-500">Elite member</p>
+              <div className="hidden max-w-[11rem] text-right sm:block">
+                <p className="truncate text-sm font-bold leading-none text-slate-900" title={user?.email ?? displayName}>
+                  {displayName}
+                </p>
+                <p className="truncate text-[10px] font-medium text-slate-500" title={headerSubtitle}>
+                  {headerSubtitle}
+                </p>
               </div>
               <Image
                 src={USER_PORTAL_AVATAR_SRC}
