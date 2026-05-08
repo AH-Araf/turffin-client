@@ -36,12 +36,18 @@ export const authService = {
 
   async forgotPassword(payload) {
     const response = await api.post(API_CONSTANT.FORGOT_PASSWORD_URL, payload);
-    return pickData(response);
+    return {
+      message: response.data?.meta?.message ?? 'Reset link sent. Check your email.',
+      data: response.data?.data ?? null,
+    };
   },
 
   async resetPassword(payload) {
     const response = await api.post(API_CONSTANT.RESET_PASSWORD_URL, payload);
-    return pickData(response);
+    return {
+      message: response.data?.meta?.message ?? 'Password reset successful.',
+      data: response.data?.data ?? null,
+    };
   },
 
   async changePassword(payload) {

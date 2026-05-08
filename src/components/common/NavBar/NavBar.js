@@ -126,7 +126,9 @@ export function NavBar() {
   }, [menuOpen]);
 
   if (pathname.startsWith("/dashboard")) return null;
-  if (pathname === "/login" || pathname === "/register") return null;
+  if (pathname === "/login" || pathname === "/register" || pathname === "/forgot-password" || pathname === "/reset-password") {
+    return null;
+  }
 
   const isHome = pathname === "/";
   const isBrowseTurf =

@@ -10,11 +10,9 @@ import { Input } from "@/components/ui/input";
 import { useLogin } from "@/hooks/useLogin";
 import { getDashboardHomePath, sanitizeReturnPath } from "@/lib/dashboard-routes";
 import { useDashboardAuth } from "@/providers/DashboardAuthProvider";
+import { AUTH_PAGE_HERO_IMAGE, AUTH_PAGE_OVERLAY_STYLE } from "@/lib/auth-page-assets";
 
 const lexend = Lexend({ subsets: ["latin"] });
-
-const backgroundImage =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuAhEp86S8b33JBDpLqosk8oJSBvyRmK6ugohDPDV68NhSp30DwsDGMLejnH2hKJt_uZZDJVquWPEjW78JCNLq-SGbThEW7bajm1o-9iap8v2iR5iBBWkazDwA8y2owVkNSA66nhl7wgHk0cDa2lJhowXlrDt2rUEL65usZFiRYNCOsbR9M3rppCCFyQU5x_n9mgzwSBFCUeamWAy4ohaNyzGVexAj-oX_jLQZ1sIAFgYi4xUIXVnFQd3LDb0AiXiRuPqk9vwG-9YQ";
 
 const googleIcon =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuCs_mwF2lS-Dm0NHHcX-CEWMKLjwmJZp1pSCS7tiSPRMAsMXE6lyNXLf70GEwj9D-SvSwxJ9eDpND3wYplM6qpM0_TcVAGtfiSMnoMshhuvse6Sc7jLFvvOaufma2kAjOjCEs3Q6PZDryRiDrCbVVs8nkGaAVs--lxR4rYEfz23UXSwxlbKCPZsnZ5745oSdIRJqtlw1xhsvcQDQ7YLt3kq0PgsqbL2Aefxa_HgcNsXIteh6KEcSTIJe9m699-xz79wFe1PDei42A";
@@ -37,11 +35,11 @@ export function LoginView() {
   const { login, isLoading, error, resetLoginState } = useLogin();
   const [message, setMessage] = useState("");
   const [registeredNotice, setRegisteredNotice] = useState(false);
+  const [passwordResetNotice, setPasswordResetNotice] = useState(false);
 
   useEffect(() => {
-    if (searchParams.get("registered") === "1") {
-      setRegisteredNotice(true);
-    }
+    setRegisteredNotice(searchParams.get("registered") === "1");
+    setPasswordResetNotice(searchParams.get("reset") === "1");
   }, [searchParams]);
 
   async function onSubmit(e) {
@@ -49,6 +47,7 @@ export function LoginView() {
     resetLoginState();
     setMessage("");
     setRegisteredNotice(false);
+    setPasswordResetNotice(false);
 
     const formData = new FormData(e.currentTarget);
     const email = String(formData.get("email") || "").trim().toLowerCase();
@@ -71,7 +70,7 @@ export function LoginView() {
       {/* Background: no backdrop-filter (heavy during scroll); GPU layer on image only. */}
       <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
         <img
-          src={backgroundImage}
+          src={AUTH_PAGE_HERO_IMAGE}
           alt="Illuminated sports stadium at dusk"
           className="h-full min-h-full w-full object-cover object-center [transform:translate3d(0,0,0)]"
           width={2560}
@@ -80,12 +79,7 @@ export function LoginView() {
           decoding="async"
           draggable={false}
         />
-        <div
-          className="absolute inset-0"
-          style={{
-            background: "linear-gradient(135deg, rgba(25, 28, 30, 0.92) 0%, rgba(0, 109, 54, 0.62) 100%)",
-          }}
-        />
+        <div className="absolute inset-0" style={AUTH_PAGE_OVERLAY_STYLE} />
       </div>
 
       <main className="relative z-10 mx-auto flex w-full min-h-dvh max-w-[480px] flex-col justify-center px-6 py-12 pb-[max(3rem,env(safe-area-inset-bottom,0px)+1.5rem)]">
@@ -105,6 +99,11 @@ export function LoginView() {
           {registeredNotice ? (
             <p className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
               Account created. Sign in with your email and password.
+            </p>
+          ) : null}
+          {passwordResetNotice ? (
+            <p className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+              Your password was updated. Sign in with your new password.
             </p>
           ) : null}
           {error ? <p className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p> : null}

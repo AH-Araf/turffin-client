@@ -13,7 +13,7 @@ export function Footer() {
   if (pathname.startsWith("/dashboard")) {
     return null;
   }
-  if (pathname === "/login" || pathname === "/register") {
+  if (pathname === "/login" || pathname === "/register" || pathname === "/forgot-password" || pathname === "/reset-password") {
     return null;
   }
   return (
