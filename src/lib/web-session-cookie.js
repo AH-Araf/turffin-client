@@ -6,16 +6,21 @@
 
 import { TURFFIN_SESSION_GATE_COOKIE } from "@/lib/web-session-constants";
 
-const MAX_AGE_SEC = 60 * 60 * 24 * 7;
+/** Match backend JWT_REFRESH_EXPIRES_IN when "remember this device" is enabled (gate cookie only). */
+const REMEMBER_MAX_AGE_SEC = 60 * 60 * 24 * 7;
 
 function secureSuffix() {
   if (typeof window === "undefined") return "";
   return window.location.protocol === "https:" ? "; Secure" : "";
 }
 
-export function setWebSessionFlag() {
+/**
+ * @param {boolean} [rememberDevice=true] If false, session cookie (cleared when the browser closes).
+ */
+export function setWebSessionFlag(rememberDevice = true) {
   if (typeof document === "undefined") return;
-  document.cookie = `${TURFFIN_SESSION_GATE_COOKIE}=1; Path=/; Max-Age=${MAX_AGE_SEC}; SameSite=Lax${secureSuffix()}`;
+  const maxAgePart = rememberDevice ? `; Max-Age=${REMEMBER_MAX_AGE_SEC}` : "";
+  document.cookie = `${TURFFIN_SESSION_GATE_COOKIE}=1; Path=/${maxAgePart}; SameSite=Lax${secureSuffix()}`;
 }
 
 export function clearWebSessionFlag() {

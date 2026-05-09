@@ -6,7 +6,8 @@ import { getApiErrorMessage } from "@/lib/api-error";
 
 export function useLogin() {
   const mutation = useMutation({
-    mutationFn: ({ email, password }) => authService.login({ email, password })
+    mutationFn: ({ email, password, rememberDevice = false }) =>
+      authService.login({ email, password, rememberDevice })
   });
 
   return {

@@ -3,7 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { authService } from "@/services/auth.service";
-import { clearWebSessionFlag, setWebSessionFlag } from "@/lib/web-session-cookie";
+import { clearWebSessionFlag } from "@/lib/web-session-cookie";
 
 /**
  * @typedef {Object} DashboardUser
@@ -52,7 +52,6 @@ export function DashboardAuthProvider({ children }) {
         return;
       }
       setUser(profile);
-      setWebSessionFlag();
       setStatus("authenticated");
     } catch (e) {
       setUser(null);
