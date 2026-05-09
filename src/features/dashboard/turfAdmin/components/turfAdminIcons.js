@@ -62,6 +62,12 @@ export function TurfAdminIcon({ name, className = "", filled = false }) {
           <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01" />
         </svg>
       );
+    case "logout":
+      return (
+        <svg {...common} fill="none" stroke={stroke} strokeWidth={sw}>
+          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" />
+        </svg>
+      );
     case "search":
       return (
         <svg {...common} fill="none" stroke={stroke} strokeWidth={sw}>

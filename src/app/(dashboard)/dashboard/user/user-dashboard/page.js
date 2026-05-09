@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Lexend } from "next/font/google";
-import { DashboardUserIcon, UserPortalShell } from "@/features/dashboard/user/components/UserPortalShell";
+import { DashboardUserIcon, UserPortalShell } from "@/components/features/dashboard/user/components/UserPortalShell";
+import { useDashboardAuth } from "@/providers/DashboardAuthProvider";
 
 const lexend = Lexend({ subsets: ["latin"] });
 
@@ -27,7 +28,21 @@ function SearchHeader() {
   );
 }
 
+function greetingFirstName(user) {
+  const name = user?.name?.trim();
+  if (name) return name.split(/\s+/)[0];
+  const email = user?.email?.trim();
+  if (email) {
+    const local = email.split("@")[0] || "there";
+    return local.charAt(0).toUpperCase() + local.slice(1);
+  }
+  return "there";
+}
+
 export default function Page() {
+  const { user, status } = useDashboardAuth();
+  const greetName = status === "loading" ? "…" : greetingFirstName(user);
+
   return (
     <UserPortalShell maxWidthClass="max-w-7xl" headerCenter={<SearchHeader />}>
       <section className="relative mb-10 overflow-hidden rounded-xl bg-turf-primary p-8 text-white shadow-xl">
@@ -35,7 +50,7 @@ export default function Page() {
         <div className="relative z-10 flex flex-col items-center gap-8 lg:flex-row">
           <div className="flex-1">
             <h1 className={`${lexend.className} mb-2 text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl`}>
-              Ready to play, Rafid?
+              Ready to play, {greetName}?
             </h1>
             <p className="mb-6 max-w-lg text-lg text-white/90">
               There are 12 slots available at your favorite facility today. Lace up and get back on the pitch.

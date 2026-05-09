@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Lexend } from "next/font/google";
-import { ArrowRight, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
+import { useRegister } from "@/hooks/useRegister";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -66,22 +68,33 @@ function StadiumRoleIcon() {
 }
 
 export function RegisterView() {
+  const router = useRouter();
+  const { register, isLoading, error: registerError, resetRegisterState } = useRegister();
   const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [role, setRole] = useState("athlete");
+  const [role, setRole] = useState("user");
 
-  function onContinue() {
-    setMessage("Step 2 will be available when onboarding is live. You can still browse and book as a guest in the meantime.");
-  }
-
-  function onFormSubmit(e) {
+  async function onFormSubmit(e) {
     e.preventDefault();
-    onContinue();
+    resetRegisterState();
+    setMessage("");
+
+    const formData = new FormData(e.currentTarget);
+    const name = String(formData.get("name") || "").trim();
+    const email = String(formData.get("email") || "").trim();
+    const password = String(formData.get("password") || "");
+
+    try {
+      await register({ name, email, password, role });
+      router.push("/login?registered=1");
+    } catch {
+      // Error surfaced via hook
+    }
   }
 
   return (
-    <div className="bg-turf-surface text-turf-on-surface antialiased md:min-h-[calc(100dvh-5rem)]">
-      <div className="mx-auto flex w-full max-w-7xl flex-col md:min-h-[min(100%,calc(100dvh-5rem))] md:flex-row">
+    <div className="min-h-dvh bg-turf-surface text-turf-on-surface antialiased">
+      <div className="mx-auto flex min-h-dvh w-full max-w-7xl flex-col md:flex-row">
         <section className="flex w-full flex-col justify-center border-b border-slate-100/80 bg-turf-primary/5 p-8 md:w-5/12 md:border-b-0 md:border-r md:py-12 md:pl-8 md:pr-6 lg:px-10 lg:py-14">
           <div className="max-w-md space-y-8 md:mx-0">
             <div>
@@ -110,24 +123,31 @@ export function RegisterView() {
 
         <section className="w-full bg-white p-8 md:w-7/12 md:py-12 md:pl-6 md:pr-8 lg:px-10 lg:py-14">
           <div className="mx-auto w-full max-w-md">
-            <div className="mb-8 flex items-center gap-1.5"><div className="h-1.5 w-8 rounded-full bg-turf-primary-container transition-all" /><div className="h-1.5 w-3 rounded-full bg-slate-200" /><div className="h-1.5 w-3 rounded-full bg-slate-200" /></div>
             <header className="mb-8">
               <h2 className={`${lexend.className} text-2xl font-semibold text-turf-on-surface md:text-3xl`}>Create your account</h2>
-              <p className="mt-1 text-turf-on-surface-variant">Step 1 of 3: General information</p>
+              <p className="mt-1 text-turf-on-surface-variant">Sign up with your details below.</p>
             </header>
 
+            {registerError ? (
+              <p className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{registerError}</p>
+            ) : null}
             {message ? <p className="mb-6 rounded-lg border border-slate-200 bg-turf-surface-low px-4 py-3 text-sm text-turf-on-surface-variant">{message}</p> : null}
 
             <form className="space-y-5" onSubmit={onFormSubmit}>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <label htmlFor="reg-first" className={`${lexend.className} text-xs font-semibold uppercase tracking-widest text-turf-on-surface-variant`}>First name</label>
-                  <Input id="reg-first" name="firstName" type="text" required autoComplete="given-name" placeholder="Rafid" className="h-12" />
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="reg-last" className={`${lexend.className} text-xs font-semibold uppercase tracking-widest text-turf-on-surface-variant`}>Last name</label>
-                  <Input id="reg-last" name="lastName" type="text" required autoComplete="family-name" placeholder="Hassan" className="h-12" />
-                </div>
+              <div className="space-y-2">
+                <label htmlFor="reg-name" className={`${lexend.className} text-xs font-semibold uppercase tracking-widest text-turf-on-surface-variant`}>
+                  Full name
+                </label>
+                <Input
+                  id="reg-name"
+                  name="name"
+                  type="text"
+                  required
+                  autoComplete="name"
+                  maxLength={80}
+                  placeholder="Rafid Hassan"
+                  className="h-12"
+                />
               </div>
               <div className="space-y-2">
                 <label htmlFor="reg-email" className={`${lexend.className} text-xs font-semibold uppercase tracking-widest text-turf-on-surface-variant`}>Email address</label>
@@ -136,35 +156,62 @@ export function RegisterView() {
               <div className="space-y-2">
                 <label htmlFor="reg-password" className={`${lexend.className} text-xs font-semibold uppercase tracking-widest text-turf-on-surface-variant`}>Password</label>
                 <div className="relative">
-                  <Input id="reg-password" name="password" type={showPassword ? "text" : "password"} required autoComplete="new-password" minLength={8} placeholder="••••••••" className="h-12 pr-12" />
+                  <Input
+                    id="reg-password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    required
+                    autoComplete="new-password"
+                    minLength={8}
+                    maxLength={72}
+                    placeholder="••••••••"
+                    className="h-12 pr-12"
+                  />
                   <button type="button" onClick={() => setShowPassword((s) => !s)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-turf-primary" aria-label={showPassword ? "Hide password" : "Show password"}>
                     {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                   </button>
                 </div>
-                <p className="text-xs text-turf-on-surface-variant">At least 8 characters with a number and a symbol.</p>
+                <p className="text-xs text-turf-on-surface-variant">8–72 characters with at least one uppercase letter, one lowercase letter, and one number.</p>
               </div>
 
               <div className="space-y-4 border-t border-slate-100 pt-6">
                 <h3 className={`${lexend.className} text-lg font-semibold text-turf-on-surface`}>Select your role</h3>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <label className="group relative flex cursor-pointer flex-col rounded-xl border-2 border-slate-100 p-4 transition hover:border-turf-primary-container hover:bg-turf-primary/5 has-checked:border-turf-primary has-checked:bg-turf-primary/5 sm:p-5">
-                    <input type="radio" name="role" value="athlete" checked={role === "athlete"} onChange={() => setRole("athlete")} className="absolute right-3 top-3 h-4 w-4 text-turf-primary" />
-                    <span className="mb-3 text-turf-primary"><SoccerIcon /></span>
-                    <span className={`${lexend.className} font-bold text-turf-on-surface`}>Athlete / user</span>
+                    <input
+                      type="radio"
+                      name="roleChoice"
+                      value="user"
+                      checked={role === "user"}
+                      onChange={() => setRole("user")}
+                      className="absolute right-3 top-3 h-4 w-4 text-turf-primary"
+                    />
+                    <span className="mb-3 text-turf-primary">
+                      <SoccerIcon />
+                    </span>
+                    <span className={`${lexend.className} font-bold text-turf-on-surface`}>Player / user</span>
                     <span className="text-xs text-turf-on-surface-variant">Book turfs and track your sessions.</span>
                   </label>
                   <label className="group relative flex cursor-pointer flex-col rounded-xl border-2 border-slate-100 p-4 transition hover:border-turf-primary-container hover:bg-turf-primary/5 has-checked:border-turf-primary has-checked:bg-turf-primary/5 sm:p-5">
-                    <input type="radio" name="role" value="admin" checked={role === "admin"} onChange={() => setRole("admin")} className="absolute right-3 top-3 h-4 w-4 text-turf-primary" />
-                    <span className="mb-3 text-turf-primary"><StadiumRoleIcon /></span>
-                    <span className={`${lexend.className} font-bold text-turf-on-surface`}>Venue admin</span>
+                    <input
+                      type="radio"
+                      name="roleChoice"
+                      value="turf-admin"
+                      checked={role === "turf-admin"}
+                      onChange={() => setRole("turf-admin")}
+                      className="absolute right-3 top-3 h-4 w-4 text-turf-primary"
+                    />
+                    <span className="mb-3 text-turf-primary">
+                      <StadiumRoleIcon />
+                    </span>
+                    <span className={`${lexend.className} font-bold text-turf-on-surface`}>Turf admin</span>
                     <span className="text-xs text-turf-on-surface-variant">Manage your venue, bookings, and hours.</span>
                   </label>
                 </div>
               </div>
 
-              <Button type="button" onClick={onContinue} className="h-12 w-full gap-2 rounded-xl text-base">
-                Continue to step 2
-                <ArrowRight className="h-4 w-4" />
+              <Button type="submit" variant="accent" className="h-12 w-full rounded-xl text-base" disabled={isLoading}>
+                {isLoading ? "Creating account..." : "Create account"}
               </Button>
 
               <p className="pt-1 text-center text-turf-on-surface-variant">

@@ -69,3 +69,36 @@ body {
 * {
   border-color: rgb(226 232 240 / 0.8);
 }
+
+/* Site-wide: show pointer on controls and links (overrides browser defaults where needed). */
+:where(
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="file"],
+  input[type="image"],
+  select,
+  summary,
+  a[href],
+  [role="button"],
+  [role="link"],
+  [role="tab"],
+  [role="menuitem"],
+  [role="option"],
+  [role="switch"]
+) {
+  cursor: pointer;
+}
+
+:where(
+  button:disabled,
+  input:disabled,
+  select:disabled,
+  summary:disabled,
+  a[href][aria-disabled="true"]
+) {
+  cursor: not-allowed;
+}

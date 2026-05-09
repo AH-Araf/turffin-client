@@ -1,4 +1,4 @@
-import { PricingPageView } from "@/features/pricing/PricingPageView";
+import { PricingPageView } from "@/components/features/pricing/PricingPageView";
 
 export const metadata = {
   title: "Memberships & pricing | Turffin",

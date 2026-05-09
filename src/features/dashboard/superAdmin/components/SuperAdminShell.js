@@ -2,10 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Inter, Lexend } from "next/font/google";
 import { TurfAdminIcon } from "@/features/dashboard/turfAdmin/components/turfAdminIcons";
+import { useDashboardAuth } from "@/providers/DashboardAuthProvider";
 
 export { TurfAdminIcon } from "@/features/dashboard/turfAdmin/components/turfAdminIcons";
 
@@ -20,7 +21,9 @@ const navLink =
 const navLinkActive = "translate-x-1 border-r-4 border-emerald-500 bg-emerald-500/10 font-semibold text-emerald-400";
 
 function SuperAdminSidebar({ onLinkClick = () => {}, showClose, onClose }) {
+  const router = useRouter();
   const pathname = usePathname() ?? "";
+  const { signOut } = useDashboardAuth();
   const is = (prefix) => pathname.startsWith(prefix);
   const turfSection = is("/dashboard/super-admin/turf-management") || is("/dashboard/super-admin/turf-detailed-view");
 
@@ -102,6 +105,18 @@ function SuperAdminSidebar({ onLinkClick = () => {}, showClose, onClose }) {
           <TurfAdminIcon name="settings" className="h-5 w-5" />
           <span>Settings</span>
         </button>
+        <button
+          type="button"
+          className={`${navLink} w-full text-left text-slate-400 hover:text-red-300`}
+          onClick={async () => {
+            onLinkClick();
+            await signOut();
+            router.replace("/login");
+          }}
+        >
+          <TurfAdminIcon name="logout" className="h-5 w-5" />
+          <span>Log out</span>
+        </button>
       </div>
     </>
   );
@@ -112,7 +127,17 @@ function SuperAdminSidebar({ onLinkClick = () => {}, showClose, onClose }) {
  */
 export function SuperAdminShell({ children, headerCenter, maxWidthClass = "max-w-7xl" }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { user, status } = useDashboardAuth();
   usePathname();
+
+  const displayName =
+    status === "loading" ? "…" : (user?.name?.trim() || user?.email || "Super admin");
+  const headerSubtitle =
+    status === "loading"
+      ? "…"
+      : user?.name?.trim() && user?.email
+        ? user.email
+        : "Super administrator";
 
   useEffect(() => {
     if (!menuOpen) return undefined;
@@ -190,9 +215,13 @@ export function SuperAdminShell({ children, headerCenter, maxWidthClass = "max-w
               </button>
             </div>
             <div className="flex items-center gap-2 pl-2 md:pl-4">
-              <div className="hidden text-right lg:block">
-                <p className="text-xs font-semibold text-slate-900">TurfManager Admin</p>
-                <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500">Super administrator</p>
+              <div className="hidden max-w-[11rem] text-right sm:block">
+                <p className="truncate text-xs font-semibold text-slate-900" title={user?.email ?? displayName}>
+                  {displayName}
+                </p>
+                <p className="truncate text-[10px] font-medium uppercase tracking-wider text-slate-500" title={headerSubtitle}>
+                  {headerSubtitle}
+                </p>
               </div>
               <Image
                 src={SUPER_ADMIN_AVATAR_SRC}

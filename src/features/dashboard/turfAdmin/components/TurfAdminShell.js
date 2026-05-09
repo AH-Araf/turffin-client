@@ -2,9 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import authService from "@/services/auth.service";
 import { Inter, Lexend } from "next/font/google";
+import { useDashboardAuth } from "@/providers/DashboardAuthProvider";
 import { TurfAdminIcon } from "./turfAdminIcons";
 
 export { TurfAdminIcon } from "./turfAdminIcons";
@@ -20,6 +22,7 @@ const navLink =
 const navLinkActive = "translate-x-1 border-r-4 border-emerald-500 bg-emerald-500/10 font-semibold text-emerald-400";
 
 function TurfAdminSidebar({ onLinkClick = () => {}, showClose, onClose }) {
+  const router = useRouter();
   const pathname = usePathname() ?? "";
   const is = (prefix) => pathname.startsWith(prefix);
 
@@ -111,6 +114,18 @@ function TurfAdminSidebar({ onLinkClick = () => {}, showClose, onClose }) {
             <TurfAdminIcon name="help" className="h-5 w-5" />
             <span>Support</span>
           </Link>
+          <button
+            type="button"
+            className={`${navLink} w-full text-left text-slate-400 hover:text-red-300`}
+            onClick={async () => {
+              onLinkClick();
+              await authService.logout();
+              router.replace("/login");
+            }}
+          >
+            <TurfAdminIcon name="logout" className="h-5 w-5" />
+            <span>Log out</span>
+          </button>
         </div>
       </div>
     </>
@@ -122,7 +137,17 @@ function TurfAdminSidebar({ onLinkClick = () => {}, showClose, onClose }) {
  */
 export function TurfAdminShell({ children, headerCenter, maxWidthClass = "max-w-7xl" }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { user, status } = useDashboardAuth();
   usePathname();
+
+  const displayName =
+    status === "loading" ? "…" : (user?.name?.trim() || user?.email || "Turf admin");
+  const headerSubtitle =
+    status === "loading"
+      ? "…"
+      : user?.name?.trim() && user?.email
+        ? user.email
+        : "Facility admin";
 
   useEffect(() => {
     if (!menuOpen) return undefined;
@@ -193,9 +218,13 @@ export function TurfAdminShell({ children, headerCenter, maxWidthClass = "max-w-
               </button>
             </div>
             <div className="flex items-center gap-2 pl-2 md:pl-4">
-              <div className="hidden text-right lg:block">
-                <p className="text-xs font-semibold text-slate-900">Alex Johnson</p>
-                <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500">Facility manager</p>
+              <div className="hidden max-w-[11rem] text-right sm:block">
+                <p className="truncate text-xs font-semibold text-slate-900" title={user?.email ?? displayName}>
+                  {displayName}
+                </p>
+                <p className="truncate text-[10px] font-medium uppercase tracking-wider text-slate-500" title={headerSubtitle}>
+                  {headerSubtitle}
+                </p>
               </div>
               <Image
                 src={TURF_ADMIN_AVATAR_SRC}

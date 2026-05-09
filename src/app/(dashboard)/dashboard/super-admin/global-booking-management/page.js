@@ -1,7 +1,7 @@
 "use client";
 
 import { Lexend } from "next/font/google";
-import { SuperAdminShell, SuperAdminSearchHeader, TurfAdminIcon } from "@/features/dashboard/superAdmin/components/SuperAdminShell";
+import { SuperAdminShell, SuperAdminSearchHeader, TurfAdminIcon } from "@/components/features/dashboard/superAdmin/components/SuperAdminShell";
 
 const lexend = Lexend({ subsets: ["latin"] });
 

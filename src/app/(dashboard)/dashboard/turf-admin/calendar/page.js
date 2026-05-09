@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { Lexend } from "next/font/google";
-import { TurfAdminIcon, TurfAdminShell, TurfAdminSearchHeader } from "@/features/dashboard/turfAdmin/components/TurfAdminShell";
+import { TurfAdminIcon, TurfAdminShell, TurfAdminSearchHeader } from "@/components/features/dashboard/turfAdmin/components/TurfAdminShell";
 
 const lexend = Lexend({ subsets: ["latin"] });
 
