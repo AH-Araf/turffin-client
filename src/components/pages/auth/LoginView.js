@@ -52,9 +52,10 @@ export function LoginView() {
     const formData = new FormData(e.currentTarget);
     const email = String(formData.get("email") || "").trim().toLowerCase();
     const password = String(formData.get("password") || "");
+    const rememberDevice = formData.get("remember") === "on";
 
     try {
-      const session = await login({ email, password });
+      const session = await login({ email, password, rememberDevice });
       await refreshSession();
       const role = session?.user?.role ?? "user";
       const home = getDashboardHomePath(role);

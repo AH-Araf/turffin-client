@@ -8,7 +8,9 @@ const persistSession = (payload) => {
   const accessToken = payload?.accessToken;
   if (accessToken) {
     setAccessToken(accessToken);
-    setWebSessionFlag();
+    // Server sets rememberDevice; omit/false => session gate cookie (aligns with refresh cookie).
+    const rememberDevice = payload?.rememberDevice !== false;
+    setWebSessionFlag(rememberDevice);
   }
   return payload;
 };
